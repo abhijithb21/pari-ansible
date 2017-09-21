@@ -1,20 +1,31 @@
 ---
+- name: Check for elastic search
+  service: name=elasticsearch state=started
+  become: true
+  become_method: sudo
+  tags: install
+  register: elasticsearch_installed
+  ignore_errors: True
+
 - name: Download elasticsearch
   get_url: >
-    url=https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.deb
+    url=https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version}}.deb
     dest=/tmp/elasticsearch.deb
   become: true
   become_method: sudo
   tags: install
+  when: elasticsearch_installed|failed
 
 - name: Install elasticsearch
   apt: deb=/tmp/elasticsearch.deb
   become: true
   become_method: sudo
   tags: install
+  when : elasticsearch_installed|failed
 
 - name: Restart elasticsearch
   service: name=elasticsearch state=restarted
   become: true
   become_method: sudo
   tags: install
+  when: elasticsearch_installed|failed

@@ -32,7 +32,7 @@
   when: cert.stat.exists == true
 
 - name: Configure for DHE parameters
-  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 creates=/etc/ssl/certs/dhparam.pem
   become: true
   become_method: sudo
   ignore_errors: true
