@@ -1,4 +1,15 @@
 ---
 - include: database.yml
 
+- name: Update search index
+  django_manage: >
+    command="update_index"
+    virtualenv={{ base_path }}/pari_env
+    app_path={{ app_path }}
+    settings={{ settings_path }}
+  tags:
+    - install
+    - deploy
+  ignore_errors: true
+
 - include: development_server.yml
