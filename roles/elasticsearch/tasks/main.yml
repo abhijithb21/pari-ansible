@@ -1,5 +1,5 @@
 ---
-- name: Check for elastic search
+- name: Try starting elastic search
   service: name=elasticsearch state=started
   become: true
   become_method: sudo
@@ -7,25 +7,39 @@
   register: elasticsearch_installed
   ignore_errors: True
 
+- name: Ping elastic search
+  uri:
+    url: http://localhost:9200
+    return_content: yes
+  register: elasticsearch_response
+  ignore_errors: True
+  when: not elasticsearch_installed|failed
+
+- name: Check the version
+  set_fact:
+    elasticsearch_version_exists: True
+  ignore_errors: True
+  when: not elasticsearch_installed|failed and elasticsearch_version in elasticsearch_response["content"]
+
 - name: Download elasticsearch
   get_url: >
     url=https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version}}.deb
-    dest=/tmp/elasticsearch.deb
+    dest={{ elasticsearch_package_download_path }}
   become: true
   become_method: sudo
   tags: install
-  when: elasticsearch_installed|failed
+  when: not elasticsearch_version_exists|default(False)
 
 - name: Install elasticsearch
-  apt: deb=/tmp/elasticsearch.deb
+  apt: deb={{ elasticsearch_package_download_path }}
   become: true
   become_method: sudo
   tags: install
-  when : elasticsearch_installed|failed
+  when: not elasticsearch_version_exists|default(False)
 
 - name: Restart elasticsearch
   service: name=elasticsearch state=restarted
   become: true
   become_method: sudo
   tags: install
-  when: elasticsearch_installed|failed
+  when: not elasticsearch_version_exists|default(False)
