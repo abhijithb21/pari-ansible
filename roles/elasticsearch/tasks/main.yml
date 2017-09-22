@@ -43,3 +43,8 @@
   become_method: sudo
   tags: install
   when: not elasticsearch_version_exists|default(False)
+
+- name: Start elastic search at boot
+  service: name=elasticsearch enabled=yes
+  become: true
+  become_method: sudo
