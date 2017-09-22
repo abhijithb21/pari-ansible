@@ -7,6 +7,10 @@
   register: elasticsearch_installed
   ignore_errors: True
 
+- name: Wait for elastic search to start
+  wait_for: port=9200 state=present timeout=15
+  when: not elasticsearch_installed|failed
+
 - name: Ping elastic search
   uri:
     url: http://localhost:9200
