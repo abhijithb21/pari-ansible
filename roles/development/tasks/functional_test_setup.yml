@@ -14,7 +14,8 @@
   become_method: sudo
   when:  gecko_installed|failed
 
-- apt_repository:
+- name: Add Firefox esr repo to apt repository
+  apt_repository:
     repo: 'ppa:jonathonf/firefox-esr'
   become: true
   become_method: sudo
