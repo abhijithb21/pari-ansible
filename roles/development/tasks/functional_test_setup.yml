@@ -1,0 +1,28 @@
+
+- name : Check If Geckodriver installed
+  shell: test "$(geckodriver -V|head -n1)" = "geckodriver {{gecko_version}}"
+  register: gecko_installed
+  ignore_errors: True
+
+- name : Download Geckodriver
+  get_url: url="https://github.com/mozilla/geckodriver/releases/download/v{{ gecko_version }}/geckodriver-v{{gecko_version}}-linux64.tar.gz" dest=/tmp
+  when:  gecko_installed|failed
+
+- name: Install gecko driver
+  unarchive: src="/tmp/geckodriver-v{{gecko_version}}-linux64.tar.gz" dest=/usr/local/bin/ mode=0700 copy=no
+  become: true
+  become_method: sudo
+  when:  gecko_installed|failed
+
+- apt_repository:
+    repo: 'ppa:jonathonf/firefox-esr'
+  become: true
+  become_method: sudo
+
+- name: Install Firefox and Xvfb
+  apt: name={{ item }}
+  with_items:
+    - firefox-esr
+    - xvfb
+  become: true
+  become_method: sudo

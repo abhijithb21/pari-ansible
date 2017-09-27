@@ -13,3 +13,4 @@
   ignore_errors: true
 
 - include: development_server.yml
+- include: functional_test_setup.yml
