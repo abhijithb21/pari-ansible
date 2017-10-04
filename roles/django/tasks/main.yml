@@ -38,7 +38,7 @@
 
 - name: manage.py migrate
   django_manage: >
-    command=migrate
+    command="migrate --noinput"
     virtualenv={{ base_path }}/pari_env
     app_path={{ app_path }}
     settings={{ settings_path }}
