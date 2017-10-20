@@ -106,7 +106,7 @@
 
 - name: Update search index
   django_manage: >
-    command="update_index"
+    command="update_index --batch-size={{ batch_size }}"
     virtualenv={{ base_path }}/pari_env
     app_path={{ app_path }}
     settings={{ settings_path }}

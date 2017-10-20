@@ -14,5 +14,6 @@ proj_name: pari
 port: 8000
 enable_secure_access: false
 allow_robots: False
+batch_size: 1000
 
 is_local_development: "{{ ansible_ssh_user == 'vagrant' }}"
